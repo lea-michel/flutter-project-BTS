@@ -13,11 +13,6 @@ extension ExtString on String {
     return imageRegExp.hasMatch(this);
   }
 
-  // bool get isValidPhone{
-  //   final phoneRegExp = RegExp(r"^\+?0[0-9]{10}$");
-  //   return phoneRegExp.hasMatch(this);
-  // }
-
   bool get isValidQuantity{
     final quantityRegExp = RegExp(r"^[0-9]");
     return quantityRegExp.hasMatch(this);
@@ -83,13 +78,11 @@ class _ProductsPageState extends State<ProductsPage>{
       }),
     );
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      //return Product.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      // If the server did return a 200 response
       throw Exception('Successful update');
 
     } else {
-      // If the server did not return a 200 OK response,
+      // If the server did not return a 200 response,
       // then throw an exception.
       throw Exception('Failed to update product.');
     }
@@ -138,7 +131,6 @@ class _ProductsPageState extends State<ProductsPage>{
   }
   //end function create product
 
-
   //function to delete a product
   Future<Product> deleteProduct(Product product) async {
     final http.Response response = await http.delete(
@@ -161,7 +153,6 @@ class _ProductsPageState extends State<ProductsPage>{
   }
   //function fetch individual product API
   Future<Product> fetchProduct(Product product) async {
-    //const $_baseUrl= 'http://10.0.2.2:3000';
     final response = await http.get(Uri.parse('http://10.0.2.2:3000/products/${product.productId}'));
 
     if (response.statusCode == 200) {
@@ -169,7 +160,6 @@ class _ProductsPageState extends State<ProductsPage>{
       dynamic responseBody = jsonDecode(response.body);
 
       // If the response is a list, extract the first item and convert it to a map
-      // This assumes that the API returns a single product for the given product ID
       if (responseBody is List) {
         responseBody = responseBody.first;
       }
@@ -488,13 +478,6 @@ class _ProductsPageState extends State<ProductsPage>{
                         style:const TextStyle(fontSize: 15),
                       ),
 
-                      /*onTap: (){
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context)=>Details(product:data)),
-                          ); //push
-                    },//onTap*/
-
                       ),
                     );
 
@@ -530,10 +513,6 @@ class _ProductsPageState extends State<ProductsPage>{
 class CreateProductPage extends StatefulWidget {
   const CreateProductPage({super.key});
 
-
-
-
-
   @override
   State<CreateProductPage> createState() => _CreateProductPageState();
   }
@@ -562,7 +541,6 @@ class CreateProductPage extends StatefulWidget {
       top : false,
       bottom:false,
       child: Form(
-  //mainAxisAlignment : MainAxisAlignment.center,
         key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
