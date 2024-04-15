@@ -9,3 +9,4 @@ I share some files from the project to show my abilities in mobile app developme
 * Node.js
 * Figma
 * Laragon
+* Git, GitHub
