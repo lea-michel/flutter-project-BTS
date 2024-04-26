@@ -6,11 +6,11 @@ const bodyParser = require('body-parser')
 
 //connexion à la base de données
 const db = mysql.createConnection({
-    'user': '',
+    'user': 'root',
     'password':'',
-     'server': '',
-     'database': '',
-     'port' : ,
+     'server': '127.0.0.1',
+     'database': 'woodycraft',
+     'port' : 3306,
 });
 app.use(bodyParser.json())
 app.use(express.json())
@@ -135,7 +135,7 @@ app.get('/stock', (req, res) => {
 //update quantité des produits
  app.put('/stock/update/:id', (req,res)=>{
      const productId = req.params.id;
-     const quantity =req.body;
+     const {quantity} = req.body;
      const query = 'UPDATE products SET quantity=? WHERE id=?';
      db.query(query,[quantity, productId],(err,results, fields)=>{
          if(err){
