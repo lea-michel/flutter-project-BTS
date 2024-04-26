@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 
 //connexion à la base de données
 const db = mysql.createConnection({
-    'user': 'root',
+    'user': '',
     'password':'',
      'server': '127.0.0.1',
      'database': 'woodycraft',
