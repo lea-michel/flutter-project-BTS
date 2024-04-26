@@ -6,13 +6,13 @@ import '../models/product.dart';
 import 'dart:async';
 
 
-//fonctions pour vérifier input
+//fonctions pour vérifier input de l'admin
 extension ExtString on String {
   bool get isValidImage{
     final imageRegExp = RegExp(r"^[a-zA-Z0-9]+\.[a-zA-Z]+");
     return imageRegExp.hasMatch(this);
   }
-
+  
   bool get isValidQuantity{
     final quantityRegExp = RegExp(r"^[0-9]");
     return quantityRegExp.hasMatch(this);
@@ -78,11 +78,14 @@ class _ProductsPageState extends State<ProductsPage>{
       }),
     );
     if (response.statusCode == 200) {
-      // If the server did return a 200 response
-      throw Exception('Successful update');
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      //return Product.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      //throw Exception('Successful update');
+      return;
 
     } else {
-      // If the server did not return a 200 response,
+      // If the server did not return a 200 OK response,
       // then throw an exception.
       throw Exception('Failed to update product.');
     }
@@ -131,6 +134,7 @@ class _ProductsPageState extends State<ProductsPage>{
   }
   //end function create product
 
+
   //function to delete a product
   Future<Product> deleteProduct(Product product) async {
     final http.Response response = await http.delete(
@@ -153,6 +157,7 @@ class _ProductsPageState extends State<ProductsPage>{
   }
   //function fetch individual product API
   Future<Product> fetchProduct(Product product) async {
+    //const $_baseUrl= 'http://10.0.2.2:3000';
     final response = await http.get(Uri.parse('http://10.0.2.2:3000/products/${product.productId}'));
 
     if (response.statusCode == 200) {
@@ -160,6 +165,7 @@ class _ProductsPageState extends State<ProductsPage>{
       dynamic responseBody = jsonDecode(response.body);
 
       // If the response is a list, extract the first item and convert it to a map
+      // This assumes that the API returns a single product for the given product ID
       if (responseBody is List) {
         responseBody = responseBody.first;
       }
@@ -272,15 +278,35 @@ class _ProductsPageState extends State<ProductsPage>{
               child: const Text('Annuler')
             ),
             ElevatedButton(
-                onPressed: ()  {
-                  updateProduct(product);
-                  setState(() {
-                    // Marquer l'état comme modifié pour déclencher un réexamen du widget
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                onPressed: ()  async {
+                  product.name = nameController.text;
+                  product.description = descriptionController.text;
+                  product.image = imageController.text;
+                  product.price = double.parse(priceController.text);
+                  product.categoryId = int.parse(categoryController.text);
+                 
+                    try{
+                      await updateProduct(product);
+                      setState(() {
+                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Produit mis à jour avec succès'),
                     ));
-                    products = fetchProducts();
-                  });
+                      products = fetchProducts();
+                      });
+                    }catch (e) {
+                      // Gérer l'erreur ici
+                      print('$e');
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Échec de la mise à jour de la quantité.'),
+                      ));
+                    }
+                  //    Navigator.of(context).pop();
+                  //   // Marquer l'état comme modifié pour déclencher un réexamen du widget
+                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  //     content: Text('Produit mis à jour avec succès'),
+                  //   ));
+                  //   products = fetchProducts();
+                  // });
                   Navigator.of(context).pop();
                 },
               style: ElevatedButton.styleFrom(
@@ -478,6 +504,13 @@ class _ProductsPageState extends State<ProductsPage>{
                         style:const TextStyle(fontSize: 15),
                       ),
 
+                      /*onTap: (){
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context)=>Details(product:data)),
+                          ); //push
+                    },//onTap*/
+
                       ),
                     );
 
@@ -513,6 +546,10 @@ class _ProductsPageState extends State<ProductsPage>{
 class CreateProductPage extends StatefulWidget {
   const CreateProductPage({super.key});
 
+
+
+
+
   @override
   State<CreateProductPage> createState() => _CreateProductPageState();
   }
@@ -541,6 +578,7 @@ class CreateProductPage extends StatefulWidget {
       top : false,
       bottom:false,
       child: Form(
+  //mainAxisAlignment : MainAxisAlignment.center,
         key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -712,7 +750,6 @@ class CreateProductPage extends StatefulWidget {
     );
   }
   }
-
 
 
 
